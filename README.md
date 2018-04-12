@@ -1,7 +1,7 @@
 # StickyView
 用RecycleView实现的吸附效果
 ## 使用
- *setup1：*gradle引入
+ *setup1:* gradle引入
  ```
  //gradle 3.0.0以上
  implementation 'sticky:sticky_recycle:1.0.0'
