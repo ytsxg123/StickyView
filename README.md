@@ -1,5 +1,7 @@
 # StickyView
 用RecycleView实现的吸附效果
+
+   演示<iframe height=498 width=510 src="C:\Users\Administrator\Desktop\4688de3b5c5eaaad58c48d8694240e8a.mp4" frameborder=0 allowfullscreen></iframe>
 ## 使用
  *setup1:* gradle引入
  ```
