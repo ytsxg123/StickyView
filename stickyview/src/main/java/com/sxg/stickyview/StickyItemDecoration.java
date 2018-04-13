@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.security.SignatureSpi;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,6 +83,7 @@ public class StickyItemDecoration extends RecyclerView.ItemDecoration {
         mPaint.setAntiAlias(true);
     }
 
+
     @Override
     public void onDrawOver(Canvas c, RecyclerView parent, RecyclerView.State state) {
         super.onDrawOver(c, parent, state);
@@ -91,34 +93,41 @@ public class StickyItemDecoration extends RecyclerView.ItemDecoration {
         mLayoutManager = (LinearLayoutManager) parent.getLayoutManager();
         mCurrentUIFindStickView = false;
 
+
         for (int m = 0, size = parent.getChildCount(); m < size; m++) {
             View view = parent.getChildAt(m);
 
+
             if (mStickyView.isStickyView(view)) {
+
                 mCurrentUIFindStickView = true;
                 getStickyViewHolder(parent);
                 cacheStickyViewPosition(m);
+                //绑定新建的一个Holder的数据
+                bindNewHolderData(view, parent, m);
 
-                if (view.getTop() <= 0) {
-                    bindDataForStickyView(mLayoutManager.findFirstVisibleItemPosition(), parent.getMeasuredWidth());
-                } else {
-                    if (mStickyPositionList.size() > 0) {
-                        if (mStickyPositionList.size() == 1) {
-                            bindDataForStickyView(mStickyPositionList.get(0), parent.getMeasuredWidth());
-                        } else {
-                            int currentPosition = getStickyViewPositionOfRecyclerView(m);
-                            int indexOfCurrentPosition = mStickyPositionList.lastIndexOf(currentPosition);
-                            bindDataForStickyView(mStickyPositionList.get(indexOfCurrentPosition - 1), parent.getMeasuredWidth());
+                if (view.getTop() > 0 && view.getTop() < mStickyItemViewHeight) {
+                    mStickyItemViewMarginTop = mStickyItemViewHeight - view.getTop();
+                    int next = m + 1;
+                    if (next < size && m == 0) {
+                        View nextView = parent.getChildAt(next);
+                        if (mStickyView.isStickyView(nextView) && nextView.getTop() > 0) {
+                            mStickyItemViewMarginTop = mStickyItemViewHeight - mStickyItemView.getTop();
                         }
                     }
-                }
-
-                if (view.getTop() > 0 && view.getTop() <= mStickyItemViewHeight) {
-                    mStickyItemViewMarginTop = mStickyItemViewHeight - view.getTop();
                 } else {
                     mStickyItemViewMarginTop = 0;
+                    int next = m + 1;
+                    if (next < size && m == 0) {
+                        View nextView = parent.getChildAt(next);
+                        if (mStickyView.isStickyView(nextView) && nextView.getTop() > 0 && view.getBottom() < mStickyItemViewHeight) {
+                            mStickyItemViewMarginTop = mStickyItemViewHeight - nextView.getTop();
+                        }
+                    }
+
                 }
 
+                //绘制
                 drawStickyItemView(c);
                 break;
             }
@@ -145,6 +154,27 @@ public class StickyItemDecoration extends RecyclerView.ItemDecoration {
         mAdapter.onBindViewHolder(mViewHolder, mBindDataPosition);
         measureLayoutStickyItemView(width);
         mStickyItemViewHeight = mStickyItemView.getBottom() - mStickyItemView.getTop();
+    }
+
+    /**
+     * 绑定一个新建的ViewHolder数据
+     */
+    private void bindNewHolderData(View view, RecyclerView parent, int m) {
+        if (view.getTop() <= 0) {
+            bindDataForStickyView(mLayoutManager.findFirstVisibleItemPosition(), parent.getMeasuredWidth());
+
+        } else {
+            if (mStickyPositionList.size() > 0) {
+                if (mStickyPositionList.size() == 1) {
+                    bindDataForStickyView(mStickyPositionList.get(0), parent.getMeasuredWidth());
+                } else {
+                    int currentPosition = getStickyViewPositionOfRecyclerView(m);
+                    int indexOfCurrentPosition = mStickyPositionList.lastIndexOf(currentPosition);
+                    bindDataForStickyView(mStickyPositionList.get(indexOfCurrentPosition - 1), parent.getMeasuredWidth());
+                }
+            }
+
+        }
     }
 
     /**
@@ -179,7 +209,6 @@ public class StickyItemDecoration extends RecyclerView.ItemDecoration {
 
     /**
      * 计算布局吸附的itemView
-     *
      */
     private void measureLayoutStickyItemView(int parentWidth) {
         if (mStickyItemView == null || !mStickyItemView.isLayoutRequested()) return;

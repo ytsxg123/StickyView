@@ -1,37 +1,112 @@
 package com.sxg.stickyrecycledemo;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.os.Build;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import com.sxg.stickyrecycledemo.adapter.ContactAdapter;
+import com.sxg.stickyrecycledemo.entity.MobileContactEntity;
+import com.sxg.stickyrecycledemo.util.ContactProviderUtil;
 import com.sxg.stickyview.StickyItemDecoration;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final int REQUEST_CONTACT = 0;
     private RecyclerView mRecycleView;
+
+    private ContactAdapter adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mRecycleView=findViewById(R.id.recycle);
+        mRecycleView = findViewById(R.id.recycle);
         mRecycleView.setLayoutManager(new LinearLayoutManager(this));
-        RecycleAdapter adapter=new RecycleAdapter();
+//        RecycleAdapter adapter=new RecycleAdapter();
+//        mRecycleView.setAdapter(adapter);
+//        mRecycleView.addItemDecoration(new StickyItemDecoration(adapter));
+//        adapter.setmList(getData());
+
+
+        adapter = new ContactAdapter();
         mRecycleView.setAdapter(adapter);
         mRecycleView.addItemDecoration(new StickyItemDecoration(adapter));
-        adapter.setmList(getData());
+        if (checkPermission()) {
+            initContact();
+        }
+
+    }
 
 
+    private boolean checkPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_CONTACTS}, REQUEST_CONTACT);
+                return false;
+            } else {
+                return true;
+            }
+        }
+        return true;
+    }
+
+    private void initContact() {
+        List<MobileContactEntity> list = ContactProviderUtil.queryContact(this);
+        //排序
+        Collections.sort(list, new Comparator<MobileContactEntity>() {
+            @Override
+            public int compare(MobileContactEntity o1, MobileContactEntity o2) {
+                try {
+                    if (o1.latter.equals(o2.latter)) {
+                        return o1.name.compareTo(o2.name);
+                    } else {
+                        if ("#".equals(o1.latter)) {
+                            return 1;
+                        } else if ("#".equals(o2.latter)) {
+                            return -1;
+                        }
+                        return o1.latter.compareTo(o2.latter);
+                    }
+                } catch (Exception e) {
+                    return -1;
+                }
+
+            }
+
+
+        });
+
+
+        adapter.setList(list);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_CONTACT) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                initContact();
+            }
+        }
     }
 
     private List<TextBean> getData() {
         List<TextBean> TextBeans = new ArrayList<>();
 
-        TextBean TextBean = new TextBean("香港明星",0);
+        TextBean TextBean = new TextBean("香港明星", 0);
         TextBeans.add(TextBean);
 
         TextBean ldh = new TextBean("刘德华", 10);
@@ -53,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
         TextBean xtf = new TextBean("谢霆锋", 10);
         TextBeans.add(xtf);
 
-        TextBean TextBeanTw = new TextBean("台湾明星：指的是中国台湾的一些有名气的电影，电视演员和歌手，他们具有很高的人气，成名时间早，成名时间久",0);
+        TextBean TextBeanTw = new TextBean("台湾明星：指的是中国台湾的一些有名气的电影，电视演员和歌手，他们具有很高的人气，成名时间早，成名时间久", 0);
         TextBeans.add(TextBeanTw);
 
         TextBean rxq = new TextBean("任贤齐", 10);
@@ -71,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
         TextBean zhl = new TextBean("周杰伦", 10);
         TextBeans.add(zhl);
 
-        TextBean TextBeanNl = new TextBean("内陆明星",0);
+        TextBean TextBeanNl = new TextBean("内陆明星", 0);
         TextBeans.add(TextBeanNl);
         TextBeans.add(TextBeanNl);
 
@@ -94,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
         TextBean zj = new TextBean("周杰", 10);
         TextBeans.add(zj);
 
-        TextBean TextBeanOm = new TextBean("美国明星",0);
+        TextBean TextBeanOm = new TextBean("美国明星", 0);
         TextBeans.add(TextBeanOm);
         TextBean mm = new TextBean("梅梅", 10);
         TextBeans.add(mm);
@@ -105,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
         TextBean xlz = new TextBean("小李子", 10);
         TextBeans.add(xlz);
 
-        TextBean TextBeanNba = new TextBean("NBA明星",0);
+        TextBean TextBeanNba = new TextBean("NBA明星", 0);
         TextBeans.add(TextBeanNba);
         TextBean xhd = new TextBean("小皇帝", 10);
         TextBeans.add(xhd);
@@ -142,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
         TextBean adn = new TextBean("安东尼", 10);
         TextBeans.add(adn);
 
-        TextBean TextBeanDy = new TextBean("导演",0);
+        TextBean TextBeanDy = new TextBean("导演", 0);
         TextBeans.add(TextBeanDy);
         TextBean jzk = new TextBean("贾樟柯", 10);
         TextBeans.add(jzk);
@@ -155,10 +230,10 @@ public class MainActivity extends AppCompatActivity {
         TextBean zym = new TextBean("张艺谋", 10);
         TextBeans.add(zym);
 
-        TextBean yjl=new TextBean("易建联",0);
+        TextBean yjl = new TextBean("易建联", 0);
         TextBeans.add(yjl);
 
-        TextBean wzz=new TextBean("王治郅",0);
+        TextBean wzz = new TextBean("王治郅", 0);
         TextBeans.add(wzz);
 
 
