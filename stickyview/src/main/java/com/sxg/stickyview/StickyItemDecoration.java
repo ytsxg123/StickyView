@@ -103,7 +103,7 @@ public class StickyItemDecoration extends RecyclerView.ItemDecoration {
                 mCurrentUIFindStickView = true;
                 getStickyViewHolder(parent);
                 cacheStickyViewPosition(m);
-                //绑定新建的一个Holder的数据
+                //create a new viewHolder and bind it
                 bindNewHolderData(view, parent, m);
 
                 if (view.getTop() > 0 && view.getTop() < mStickyItemViewHeight) {
@@ -157,7 +157,7 @@ public class StickyItemDecoration extends RecyclerView.ItemDecoration {
     }
 
     /**
-     * 绑定一个新建的ViewHolder数据
+     * Create a new ViewHolder and bind data
      */
     private void bindNewHolderData(View view, RecyclerView parent, int m) {
         if (view.getTop() <= 0) {

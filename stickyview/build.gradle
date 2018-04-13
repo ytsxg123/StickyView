@@ -7,8 +7,8 @@ publish {
     userOrg = 'ytsxg123'//bintray.com的用户名
     groupId = 'sticky'//jcenter上的路径
     artifactId = 'sticky_recycle'//项目名称
-    publishVersion = '1.0.0'//版本号
-    desc = 'ReycleView吸附效果'//描述，不重要
+    publishVersion = '1.1.0'//版本号
+    desc = '修复连续的2个粘连View出现的时候效果不正确'//描述，不重要
 }
 
 android {
