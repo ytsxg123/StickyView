@@ -3,7 +3,7 @@
 
 
 ## 效果
-![点击查看jif](https://img-blog.csdn.net/20180413140014257?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3N1bnhpYW9nYW5nMDIxNA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
+![点击查看](https://github.com/ytsxg123/StickyView/blob/master/gif/show.gif)
 ## 使用
  *setup1:* gradle引入
  ```
