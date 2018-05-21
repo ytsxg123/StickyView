@@ -25,4 +25,8 @@
     
  ### 2018/4/12 第一版提交
    版本 1.0.0
+   
+   
+ ### 原作者地址
+ https://github.com/chenpengfei88/StickyItemDecoration
  
